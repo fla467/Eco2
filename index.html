@@ -210,74 +210,111 @@
 <script>
   let coins = 0;
   let currentQuiz = 0;
+  const answers = {};
+
+  // 20 quiz sets (each with 3–4 questions)
   const quizzes = [
     [
       { q: "Which animal is known as the king of the jungle?", options: ["Elephant", "Lion", "Tiger", "Bear"], answer: 1 },
       { q: "What is the largest mammal?", options: ["Elephant", "Blue Whale", "Giraffe", "Hippo"], answer: 1 },
       { q: "Which bird is a symbol of peace?", options: ["Crow", "Dove", "Eagle", "Parrot"], answer: 1 }
+    ],
+    [
+      { q: "Which animal can change its color?", options: ["Chameleon", "Lion", "Zebra", "Panda"], answer: 0 },
+      { q: "What is the fastest land animal?", options: ["Cheetah", "Horse", "Tiger", "Kangaroo"], answer: 0 },
+      { q: "Which animal has the longest lifespan?", options: ["Tortoise", "Elephant", "Whale", "Parrot"], answer: 0 }
+    ],
+    [
+      { q: "Which animal is famous for building dams?", options: ["Beaver", "Otter", "Bear", "Moose"], answer: 0 },
+      { q: "Which bird can mimic human speech?", options: ["Parrot", "Crow", "Eagle", "Sparrow"], answer: 0 },
+      { q: "Which animal is the tallest?", options: ["Giraffe", "Elephant", "Horse", "Camel"], answer: 0 }
+    ],
+    [
+      { q: "Which sea creature has eight arms?", options: ["Octopus", "Squid", "Crab", "Starfish"], answer: 0 },
+      { q: "Which animal is the largest land carnivore?", options: ["Polar Bear", "Lion", "Tiger", "Grizzly Bear"], answer: 0 },
+      { q: "Which animal is known for its black and white stripes?", options: ["Zebra", "Tiger", "Skunk", "Panda"], answer: 0 }
+    ],
+    [
+      { q: "Which animal is known for carrying its home on its back?", options: ["Snail", "Turtle", "Crab", "Hermit Crab"], answer: 1 },
+      { q: "Which bird is the fastest flyer?", options: ["Peregrine Falcon", "Eagle", "Hummingbird", "Swan"], answer: 0 },
+      { q: "Which mammal can fly?", options: ["Bat", "Flying Squirrel", "Parrot", "None"], answer: 0 }
+    ],
+    [
+      { q: "Which animal is known for its trunk?", options: ["Elephant", "Rhino", "Hippo", "Camel"], answer: 0 },
+      { q: "Which animal produces silk?", options: ["Spider", "Silkworm", "Both", "None"], answer: 2 },
+      { q: "Which bird is flightless?", options: ["Penguin", "Ostrich", "Kiwi", "All of these"], answer: 3 }
+    ],
+    [
+      { q: "Which animal is the largest reptile?", options: ["Komodo Dragon", "Crocodile", "Alligator", "Iguana"], answer: 1 },
+      { q: "Which animal is known as man's best friend?", options: ["Dog", "Cat", "Horse", "Parrot"], answer: 0 },
+      { q: "Which animal is known for hopping?", options: ["Kangaroo", "Rabbit", "Frog", "All of these"], answer: 3 }
+    ],
+    [
+      { q: "Which animal is the national symbol of Australia?", options: ["Kangaroo", "Koala", "Emu", "Platypus"], answer: 0 },
+      { q: "Which animal is known for its hump?", options: ["Camel", "Horse", "Cow", "Buffalo"], answer: 0 },
+      { q: "Which bird is nocturnal?", options: ["Owl", "Crow", "Eagle", "Sparrow"], answer: 0 }
+    ],
+    [
+      { q: "Which animal is known for playing dead?", options: ["Opossum", "Snake", "Lizard", "Frog"], answer: 0 },
+      { q: "Which animal is known for its spots?", options: ["Leopard", "Cheetah", "Jaguar", "All of these"], answer: 3 },
+      { q: "Which animal is known for its tusks?", options: ["Elephant", "Walrus", "Both", "None"], answer: 2 }
+    ],
+    [
+      { q: "Which animal is known for its slow movement?", options: ["Sloth", "Tortoise", "Snail", "All of these"], answer: 3 },
+      { q: "Which bird is known for its long migration?", options: ["Swallow", "Arctic Tern", "Goose", "All of these"], answer: 3 },
+      { q: "Which animal is known for its pouch?", options: ["Kangaroo", "Koala", "Wallaby", "All of these"], answer: 3 }
+    ],
+    [
+      { q: "Which animal is known for its mane?", options: ["Lion", "Horse", "Zebra", "Tiger"], answer: 0 },
+      { q: "Which bird is the largest?", options: ["Ostrich", "Eagle", "Albatross", "Pelican"], answer: 0 },
+      { q: "Which animal is known for its antlers?", options: ["Deer", "Moose", "Caribou", "All of these"], answer: 3 }
+    ],
+    [
+      { q: "Which animal is known for its shell?", options: ["Turtle", "Crab", "Snail", "All of these"], answer: 3 },
+      { q: "Which bird is known for its colorful feathers?", options: ["Peacock", "Parrot", "Macaw", "All of these"], answer: 3 },
+      { q: "Which animal is known for its roar?", options: ["Lion", "Tiger", "Bear", "All of these"], answer: 3 }
+    ],
+    [
+      { q: "Which animal is known for its stripes?", options: ["Tiger", "Zebra", "Okapi", "All of these"], answer: 3 },
+      { q: "Which bird is known for its long beak?", options: ["Toucan", "Pelican", "Hummingbird", "All of these"], answer: 3 },
+      { q: "Which animal is known for its speed in water?", options: ["Dolphin", "Shark", "Swordfish", "All of these"], answer: 3 }
+    ],
+    [
+      { q: "Which animal is known for its camouflage?", options: ["Chameleon", "Octopus", "Leaf Insect", "All of these"], answer: 3 },
+      { q: "Which bird is known for its wisdom?", options: ["Owl", "Crow", "Eagle", "Parrot"], answer: 0 },
+      { q: "Which animal is known for its horn?", options: ["Rhino", "Antelope", "Goat", "All of these"], answer: 3 }
+    ],
+    [
+      { q: "Which animal is known for climbing trees?", options: ["Monkey", "Koala", "Leopard", "All of these"], answer: 3 },
+      { q: "Which bird is known for its dance?", options: ["Crane", "Peacock", "Bird of Paradise", "All of these"], answer: 3 },
+      { q: "Which animal is known for its intelligence?", options: ["Dolphin", "Chimpanzee", "Elephant", "All of these"], answer: 3 }
+    ],
+    [
+      { q: "Which animal is known for migration?", options: ["Wildebeest", "Monarch Butterfly", "Salmon", "All of these"], answer: 3 },
+      { q: "Which bird is known for its song?", options: ["Nightingale", "Canary", "Mockingbird", "All of these"], answer: 3 },
+      { q: "Which animal is known for pack hunting?", options: ["Wolf", "Lion", "Hyena", "All of these"], answer: 3 }
+    ],
+        // Quiz 17
+    [
+      { q: "Which animal is known for carrying babies in a pouch?", options: ["Kangaroo", "Koala", "Wallaby", "All of these"], answer: 3 },
+      { q: "Which bird is known for building elaborate nests?", options: ["Weaver Bird", "Bowerbird", "Swallow", "All of these"], answer: 3 },
+      { q: "Which animal is known for echolocation?", options: ["Bat", "Dolphin", "Both", "None"], answer: 2 }
+    ],
+    // Quiz 18
+    [
+      { q: "Which animal is known for spraying a foul smell?", options: ["Skunk", "Porcupine", "Snake", "Frog"], answer: 0 },
+      { q: "Which bird is known for running fast but not flying?", options: ["Ostrich", "Emu", "Cassowary", "All of these"], answer: 3 },
+      { q: "Which animal is known for its hump storing fat?", options: ["Camel", "Horse", "Cow", "Buffalo"], answer: 0 }
+    ],
+    // Quiz 19
+    [
+      { q: "Which animal is known for its long neck?", options: ["Giraffe", "Camel", "Ostrich", "All of these"], answer: 0 },
+      { q: "Which bird is known for its ability to swim?", options: ["Penguin", "Duck", "Swan", "All of these"], answer: 3 },
+      { q: "Which animal is known for its sharp quills?", options: ["Porcupine", "Hedgehog", "Both", "None"], answer: 2 }
+    ],
+    // Quiz 20
+    [
+      { q: "Which animal is known for living in colonies?", options: ["Ant", "Bee", "Termite", "All of these"], answer: 3 },
+      { q: "Which bird is known for its migration across continents?", options: ["Arctic Tern", "Swallow", "Goose", "All of these"], answer: 3 },
+      { q: "Which animal is known for its ability to regenerate limbs?", options: ["Starfish", "Salamander", "Crab", "All of these"], answer: 3 }
     ]
-    // Add more quiz sets here...
-  ];
-  const answers = {};
-
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
-    document.getElementById(id).style.display = 'block';
-    if (id === 'quiz') loadQuiz();
-    if (id === 'shop') document.getElementById('coinBalance').innerText = coins;
-  }
-
-  function loadQuiz() {
-    const qDiv = document.getElementById('questions');
-    qDiv.innerHTML = "";
-    quizzes[currentQuiz].forEach((q, i) => {
-      let html = `<div class="question"><p>${q.q}</p>`;
-      q.options.forEach((opt, j) => {
-        html += `<div class="option" onclick="selectOption(${i},${j},this)">${opt}</div>`;
-      });
-      html += `</div>`;
-      qDiv.innerHTML += html;
-    });
-  }
-
-  function selectOption(qIndex, optIndex, el) {
-    document.querySelectorAll(`.question:nth-child(${qIndex+1}) .option`).forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    answers[qIndex] = optIndex;
-  }
-
-  function submitQuiz() {
-    let correct = 0;
-    quizzes[currentQuiz].forEach((q, i) => {
-      if (answers[i] === q.answer) correct++;
-    });
-    const earned = correct * 20;
-    coins += earned;
-    document.getElementById('popupTitle').innerText = "Quiz Results";
-    document.getElementById('popupMessage').innerText = `You got ${correct} out of ${quizzes[currentQuiz].length} correct!\nYou earned ${earned} coins.`;
-    openPopup();
-    currentQuiz = (currentQuiz + 1) % quizzes.length; // cycle quizzes
-  }
-
-  function buyItem(cost, itemName) {
-    if (coins >= cost) {
-      coins -= cost;
-      document.getElementById('coinBalance').innerText = coins;
-      document.getElementById('popupTitle').innerText = "Shop Purchase";
-      document.getElementById('popupMessage').innerText = `You bought ${itemName} for ${cost} coins!`;
-      openPopup();
-    } else {
-      document.getElementById('popupTitle').innerText = "Not Enough Coins";
-      document.getElementById('popupMessage').innerText = `You need ${cost} coins to buy ${itemName}, but you only have ${coins}.`;
-      openPopup();
-    }
-  }
-
-  function openPopup() {
-    document.getElementById('popup').style.display = 'flex';
-  }
-
-  function closePopup() {
-    document.getElementById('popup').style.display = 'none';
-  }
-</script>
