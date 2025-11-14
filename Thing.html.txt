@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Save the Wildlife Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+      margin: 0;
+      padding: 0;
+    }
+    .screen {
+      display: none;
+      padding: 20px;
+    }
+    .active {
+      display: block;
+    }
+    h1 {
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background: #4caf50;
+      color: white;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .shop-item {
+      border: 1px solid #333;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Start Menu -->
+  <div id="menu" class="screen active">
+    <h1>🌍 Save the Wildlife Quiz 🌍</h1>
+    <p>Test your knowledge and earn coins to buy boosts!</p>
+    <button onclick="startQuiz()">Start Quiz</button>
+  </div>
+
+  <!-- Quiz Section -->
+  <div id="quiz" class="screen">
+    <h2>Quiz Time!</h2>
+    <div id="questions"></div>
+    <button onclick="submitQuiz()">Submit Answers</button>
+  </div>
+
+  <!-- Results Section -->
+  <div id="results" class="screen">
+    <h2>Results</h2>
+    <p id="score"></p>
+    <p id="coins"></p>
+    <button onclick="openShop()">Go to Shop</button>
+  </div>
+
+  <!-- Shop Section -->
+  <div id="shop" class="screen">
+    <h2>Wildlife Shop</h2>
+    <p>Your Coins: <span id="coinBalance">0</span></p>
+    <div class="shop-item">
+      <p>🐾 Extra Hint - 20 coins</p>
+      <button onclick="buyItem(20)">Buy</button>
+    </div>
+    <div class="shop-item">
+      <p>🦅 Double Coins Next Quiz - 40 coins</p>
+      <button onclick="buyItem(40)">Buy</button>
+    </div>
+    <div class="shop-item">
+      <p>🌳 Unlock Bonus Question - 30 coins</p>
+      <button onclick="buyItem(30)">Buy</button>
+    </div>
+    <button onclick="restart()">Restart Game</button>
+  </div>
+
+<script>
+  const questions = [
+    { q: "Which animal is known as the king of the jungle?", options: ["Elephant", "Lion", "Tiger", "Bear"], answer: 1 },
+    { q: "What is the largest mammal?", options: ["Elephant", "Blue Whale", "Giraffe", "Hippo"], answer: 1 },
+    { q: "Which bird is a symbol of peace?", options: ["Crow", "Dove", "Eagle", "Parrot"], answer: 1 }
+  ];
+
+  let coins = 0;
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function startQuiz() {
+    showScreen('quiz');
+    const qDiv = document.getElementById('questions');
+    qDiv.innerHTML = "";
+    questions.forEach((q, i) => {
+      let html = `<p>${q.q}</p>`;
+      q.options.forEach((opt, j) => {
+        html += `<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label><br>`;
+      });
+      qDiv.innerHTML += html;
+    });
+  }
+
+  function submitQuiz() {
+    let correct = 0;
+    questions.forEach((q, i) => {
+      const selected = document.querySelector(`input[name="q${i}"]:checked`);
+      if (selected && parseInt(selected.value) === q.answer) {
+        correct++;
+      }
+    });
+    const earned = correct * 20; // 1 correct = 20 coins (max 60)
+    coins += earned;
+    document.getElementById('score').innerText = `You got ${correct} out of ${questions.length} correct!`;
+    document.getElementById('coins').innerText = `You earned ${earned} coins.`;
+    showScreen('results');
+  }
+
+  function openShop() {
+    document.getElementById('coinBalance').innerText = coins;
+    showScreen('shop');
+  }
+
+  function buyItem(cost) {
+    if (coins >= cost) {
+      coins -= cost;
+      alert("Purchase successful!");
+      document.getElementById('coinBalance').innerText = coins;
+    } else {
+      alert("Not enough coins!");
+    }
+  }
+
+  function restart() {
+    coins = 0;
+    showScreen('menu');
+  }
+</script>
+
+</body>
+</html>
