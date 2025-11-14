@@ -28,20 +28,28 @@
     #sidebar h2 {
       margin-bottom: 20px;
     }
-    #sidebar button {
+
+    /* Global button style */
+    button {
       width: 180px;
       margin: 10px 0;
       padding: 12px;
       border: none;
       border-radius: 8px;
-      background: #3498db;
+      background: linear-gradient(45deg, #27ae60, #2ecc71);
       color: white;
       font-size: 16px;
       cursor: pointer;
       transition: 0.3s;
+      box-shadow: 0 4px #1e8449;
     }
-    #sidebar button:hover {
-      background: #2980b9;
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px #145a32;
+    }
+    button:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px #145a32;
     }
 
     /* Main content */
@@ -92,22 +100,27 @@
       color: white;
     }
 
-    /* Cool submit button */
-    .submit-btn {
-      margin-top: 20px;
-      padding: 15px 30px;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(45deg, #27ae60, #2ecc71);
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 0 15px rgba(39,174,96,0.6);
-      transition: transform 0.2s, box-shadow 0.2s;
+    /* Shop items */
+    .shop-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
     }
-    .submit-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px rgba(39,174,96,0.9);
+    .shop-item {
+      flex: 1 1 200px;
+      background: #fff;
+      border: 2px solid #27ae60;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: 0.3s;
+    }
+    .shop-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+    .shop-item p {
+      margin: 10px 0;
     }
 
     /* Popup modal */
@@ -132,15 +145,6 @@
     @keyframes zoomIn {
       from { transform: scale(0.5); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
-    }
-    #popup button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -167,24 +171,29 @@
     <div id="quiz" class="screen" style="display:none;">
       <h2>Quiz Time 🦁</h2>
       <div id="questions"></div>
-      <button class="submit-btn" onclick="submitQuiz()">Submit Answers</button>
+      <button onclick="submitQuiz()">Submit Answers</button>
     </div>
 
     <!-- Shop -->
     <div id="shop" class="screen" style="display:none;">
       <h2>Wildlife Shop 🛒</h2>
       <p>Your Coins: <span id="coinBalance">0</span></p>
-      <div class="shop-item">
-        <p>🐾 Extra Hint - 20 coins</p>
-        <button onclick="buyItem(20)">Buy</button>
-      </div>
-      <div class="shop-item">
-        <p>🦅 Double Coins Next Quiz - 40 coins</p>
-        <button onclick="buyItem(40)">Buy</button>
-      </div>
-      <div class="shop-item">
-        <p>🌳 Unlock Bonus Question - 30 coins</p>
-        <button onclick="buyItem(30)">Buy</button>
+      <div class="shop-grid">
+        <div class="shop-item">
+          <h3>🐾 Extra Hint</h3>
+          <p>Cost: 20 coins</p>
+          <button onclick="buyItem(20,'Extra Hint')">Buy</button>
+        </div>
+        <div class="shop-item">
+          <h3>🦅 Double Coins</h3>
+          <p>Cost: 40 coins</p>
+          <button onclick="buyItem(40,'Double Coins')">Buy</button>
+        </div>
+        <div class="shop-item">
+          <h3>🌳 Bonus Question</h3>
+          <p>Cost: 30 coins</p>
+          <button onclick="buyItem(30,'Bonus Question')">Buy</button>
+        </div>
       </div>
     </div>
   </div>
@@ -192,69 +201,23 @@
   <!-- Popup Modal -->
   <div id="popup">
     <div class="content">
-      <h2>Results</h2>
-      <p id="score"></p>
-      <p id="coins"></p>
+      <h2 id="popupTitle">Results</h2>
+      <p id="popupMessage"></p>
       <button onclick="closePopup()">Close</button>
     </div>
   </div>
 
 <script>
+  let coins = 0;
+  let currentQuiz = 0;
   const quizzes = [
     [
       { q: "Which animal is known as the king of the jungle?", options: ["Elephant", "Lion", "Tiger", "Bear"], answer: 1 },
       { q: "What is the largest mammal?", options: ["Elephant", "Blue Whale", "Giraffe", "Hippo"], answer: 1 },
       { q: "Which bird is a symbol of peace?", options: ["Crow", "Dove", "Eagle", "Parrot"], answer: 1 }
-    ],
-    [
-      { q: "Which animal can change its color?", options: ["Chameleon", "Lion", "Zebra", "Panda"], answer: 0 },
-      { q: "What is the fastest land animal?", options: ["Cheetah", "Horse", "Tiger", "Kangaroo"], answer: 0 },
-      { q: "Which animal has the longest lifespan?", options: ["Tortoise", "Elephant", "Whale", "Parrot"], answer: 0 }
-    ],
-    [
-      { q: "Which animal is famous for building dams?", options: ["Beaver", "Otter", "Bear", "Moose"], answer: 0 },
-      { q: "Which bird can mimic human speech?", options: ["Parrot", "Crow", "Eagle", "Sparrow"], answer: 0 },
-      { q: "Which animal is the tallest?", options: ["Giraffe", "Elephant", "Horse", "Camel"], answer: 0 }
-    ],
-    [
-      { q: "Which animal is known for its black and white stripes?", options: ["Zebra", "Tiger", "Skunk", "Panda"], answer: 0 },
-      { q: "Which sea creature has eight arms?", options: ["Octopus", "Squid", "Crab", "Starfish"], answer: 0 },
-      { q: "Which animal is the largest land carnivore?", options: ["Polar Bear", "Lion", "Tiger", "Grizzly Bear"], answer: 0 }
-    ],
-    [
-      { q: "Which animal is known for carrying its home on its back?", options: ["Snail", "Turtle", "Crab", "Hermit Crab"], answer: 1 },
-      { q: "Which bird is the fastest flyer?", options: ["Peregrine Falcon", "Eagle", "Hummingbird", "Swan"], answer: 0 },
-      { q: "Which mammal can fly?", options: ["Bat", "Flying Squirrel", "Parrot", "None"], answer: 0 }
-    ],
-    [
-      { q: "Which animal is known for its trunk?", options: ["Elephant", "Rhino", "Hippo", "Camel"], answer: 0 },
-      { q: "Which animal produces silk?", options: ["Spider", "Silkworm", "Both", "None"], answer: 2 },
-      { q: "Which bird is flightless?", options: ["Penguin", "Ostrich", "Kiwi", "All of these"], answer: 3 }
-    ],
-    [
-      { q: "Which animal is the largest reptile?", options: ["Komodo Dragon", "Crocodile", "Alligator", "Iguana"], answer: 1 },
-      { q: "Which animal is known as man's best friend?", options: ["Dog", "Cat", "Horse", "Parrot"], answer: 0 },
-      { q: "Which animal is known for hopping?", options: ["Kangaroo", "Rabbit", "Frog", "All of these"], answer: 3 }
-    ],
-    [
-      { q: "Which animal is the national symbol of Australia?", options: ["Kangaroo", "Koala", "Emu", "Platypus"], answer: 0 },
-      { q: "Which animal is known for its hump?", options: ["Camel", "Horse", "Cow", "Buffalo"], answer: 0 },
-      { q: "Which bird is nocturnal?", options: ["Owl", "Crow", "Eagle", "Sparrow"], answer: 0 }
-    ],
-    [
-      { q: "Which animal is known for playing dead?", options: ["Opossum", "Snake", "Lizard", "Frog"], answer: 0 },
-      { q: "Which animal is known for its spots?", options: ["Leopard", "Cheetah", "Jaguar", "All of these"], answer: 3 },
-      { q: "Which animal is known for its tusks?", options: ["Elephant", "Walrus", "Both", "None"], answer: 2 }
-    ],
-    [
-      { q: "Which animal is known for its slow movement?", options: ["Sloth", "Tortoise", "Snail", "All of these"], answer: 3 },
-      { q: "Which bird is known for its long migration?", options: ["Swallow", "Arctic Tern", "Goose", "All of these"], answer: 3 },
-      { q: "Which animal is known for its pouch?", options: ["Kangaroo", "Koala", "Wallaby", "All of these"], answer: 3 }
     ]
+    // Add more quiz sets here...
   ];
-
-  let currentQuiz = 0;
-  let coins = 0;
   const answers = {};
 
   function showScreen(id) {
@@ -288,21 +251,25 @@
     quizzes[currentQuiz].forEach((q, i) => {
       if (answers[i] === q.answer) correct++;
     });
-    const earned = correct * 20; // 20 coins per correct
+    const earned = correct * 20;
     coins += earned;
-    document.getElementById('score').innerText = `You got ${correct} out of ${quizzes[currentQuiz].length} correct!`;
-    document.getElementById('coins').innerText = `You earned ${earned} coins.`;
+    document.getElementById('popupTitle').innerText = "Quiz Results";
+    document.getElementById('popupMessage').innerText = `You got ${correct} out of ${quizzes[currentQuiz].length} correct!\nYou earned ${earned} coins.`;
     openPopup();
     currentQuiz = (currentQuiz + 1) % quizzes.length; // cycle quizzes
   }
 
-  function buyItem(cost) {
+  function buyItem(cost, itemName) {
     if (coins >= cost) {
       coins -= cost;
-      alert("Purchase successful!");
       document.getElementById('coinBalance').innerText = coins;
+      document.getElementById('popupTitle').innerText = "Shop Purchase";
+      document.getElementById('popupMessage').innerText = `You bought ${itemName} for ${cost} coins!`;
+      openPopup();
     } else {
-      alert("Not enough coins!");
+      document.getElementById('popupTitle').innerText = "Not Enough Coins";
+      document.getElementById('popupMessage').innerText = `You need ${cost} coins to buy ${itemName}, but you only have ${coins}.`;
+      openPopup();
     }
   }
 
