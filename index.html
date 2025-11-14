@@ -5,136 +5,222 @@
   <title>Save the Wildlife Quiz</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: linear-gradient(135deg, #a8e6cf, #dcedc1);
       margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f8f5;
+      display: flex;
     }
-    .screen {
-      display: none;
+
+    /* Sidebar */
+    #sidebar {
+      width: 220px;
+      background: #2c3e50;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+    }
+    #sidebar h2 {
+      margin-bottom: 20px;
+    }
+    #sidebar button {
+      width: 180px;
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #3498db;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #sidebar button:hover {
+      background: #2980b9;
+    }
+
+    /* Main content */
+    #main {
+      margin-left: 220px;
       padding: 20px;
+      width: 100%;
     }
-    .active {
-      display: block;
+
+    /* Start screen plaza style */
+    #start {
+      text-align: center;
+      margin-top: 100px;
+      animation: fadeIn 2s ease-in;
     }
-    h1 {
+    #start h1 {
+      font-size: 40px;
+      color: #27ae60;
       animation: bounce 2s infinite;
     }
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
-    button {
-      padding: 10px 20px;
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Quiz cards */
+    .question {
+      margin: 20px 0;
+    }
+    .option {
+      display: inline-block;
+      background: #ecf0f1;
       margin: 10px;
-      font-size: 16px;
+      padding: 15px 25px;
+      border-radius: 10px;
       cursor: pointer;
-      border: none;
-      border-radius: 5px;
-      background: #4caf50;
+      transition: 0.3s;
+    }
+    .option:hover {
+      background: #bdc3c7;
+    }
+    .option.selected {
+      background: #27ae60;
       color: white;
     }
-    button:hover {
-      background: #45a049;
-    }
+
+    /* Shop items */
     .shop-item {
-      border: 1px solid #333;
-      margin: 10px;
-      padding: 10px;
-      border-radius: 5px;
       background: #fff;
+      border: 1px solid #ccc;
+      margin: 15px;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .shop-item button {
+      background: #e67e22;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+    }
+    .shop-item button:hover {
+      background: #d35400;
     }
   </style>
 </head>
 <body>
 
-  <!-- Start Menu -->
-  <div id="menu" class="screen active">
-    <h1>🌍 Save the Wildlife Quiz 🌍</h1>
-    <p>Test your knowledge and earn coins to buy boosts!</p>
-    <button onclick="startQuiz()">Start Quiz</button>
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <h2>🌍 Wildlife</h2>
+    <button onclick="showScreen('start')">Start Plaza</button>
+    <button onclick="showScreen('quiz')">Quiz</button>
+    <button onclick="showScreen('shop')">Shop</button>
   </div>
 
-  <!-- Quiz Section -->
-  <div id="quiz" class="screen">
-    <h2>Quiz Time!</h2>
-    <div id="questions"></div>
-    <button onclick="submitQuiz()">Submit Answers</button>
-  </div>
+  <!-- Main content -->
+  <div id="main">
+    <!-- Start Screen -->
+    <div id="start" class="screen active">
+      <h1>Welcome to Save the Wildlife!</h1>
+      <p>Earn coins by answering quizzes and buy boosts in the shop.</p>
+      <button onclick="showScreen('quiz')">Begin Adventure</button>
+    </div>
 
-  <!-- Results Section -->
-  <div id="results" class="screen">
-    <h2>Results</h2>
-    <p id="score"></p>
-    <p id="coins"></p>
-    <button onclick="openShop()">Go to Shop</button>
-  </div>
+    <!-- Quiz Screen -->
+    <div id="quiz" class="screen" style="display:none;">
+      <h2>Quiz Time 🦁</h2>
+      <div id="questions"></div>
+      <button onclick="submitQuiz()">Submit Answers</button>
+    </div>
 
-  <!-- Shop Section -->
-  <div id="shop" class="screen">
-    <h2>Wildlife Shop</h2>
-    <p>Your Coins: <span id="coinBalance">0</span></p>
-    <div class="shop-item">
-      <p>🐾 Extra Hint - 20 coins</p>
-      <button onclick="buyItem(20)">Buy</button>
+    <!-- Results -->
+    <div id="results" class="screen" style="display:none;">
+      <h2>Results</h2>
+      <p id="score"></p>
+      <p id="coins"></p>
     </div>
-    <div class="shop-item">
-      <p>🦅 Double Coins Next Quiz - 40 coins</p>
-      <button onclick="buyItem(40)">Buy</button>
+
+    <!-- Shop -->
+    <div id="shop" class="screen" style="display:none;">
+      <h2>Wildlife Shop 🛒</h2>
+      <p>Your Coins: <span id="coinBalance">0</span></p>
+      <div class="shop-item">
+        <p>🐾 Extra Hint - 20 coins</p>
+        <button onclick="buyItem(20)">Buy</button>
+      </div>
+      <div class="shop-item">
+        <p>🦅 Double Coins Next Quiz - 40 coins</p>
+        <button onclick="buyItem(40)">Buy</button>
+      </div>
+      <div class="shop-item">
+        <p>🌳 Unlock Bonus Question - 30 coins</p>
+        <button onclick="buyItem(30)">Buy</button>
+      </div>
     </div>
-    <div class="shop-item">
-      <p>🌳 Unlock Bonus Question - 30 coins</p>
-      <button onclick="buyItem(30)">Buy</button>
-    </div>
-    <button onclick="restart()">Restart Game</button>
   </div>
 
 <script>
-  const questions = [
-    { q: "Which animal is known as the king of the jungle?", options: ["Elephant", "Lion", "Tiger", "Bear"], answer: 1 },
-    { q: "What is the largest mammal?", options: ["Elephant", "Blue Whale", "Giraffe", "Hippo"], answer: 1 },
-    { q: "Which bird is a symbol of peace?", options: ["Crow", "Dove", "Eagle", "Parrot"], answer: 1 }
+  const quizzes = [
+    [
+      { q: "Which animal is known as the king of the jungle?", options: ["Elephant", "Lion", "Tiger", "Bear"], answer: 1 },
+      { q: "What is the largest mammal?", options: ["Elephant", "Blue Whale", "Giraffe", "Hippo"], answer: 1 },
+      { q: "Which bird is a symbol of peace?", options: ["Crow", "Dove", "Eagle", "Parrot"], answer: 1 }
+    ],
+    [
+      { q: "Which animal can change its color?", options: ["Chameleon", "Lion", "Zebra", "Panda"], answer: 0 },
+      { q: "What is the fastest land animal?", options: ["Cheetah", "Horse", "Tiger", "Kangaroo"], answer: 0 },
+      { q: "Which animal has the longest lifespan?", options: ["Tortoise", "Elephant", "Whale", "Parrot"], answer: 0 }
+    ]
   ];
 
+  let currentQuiz = 0;
   let coins = 0;
 
   function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+    if (id === 'quiz') loadQuiz();
+    if (id === 'shop') document.getElementById('coinBalance').innerText = coins;
   }
 
-  function startQuiz() {
-    showScreen('quiz');
+  function loadQuiz() {
     const qDiv = document.getElementById('questions');
     qDiv.innerHTML = "";
-    questions.forEach((q, i) => {
-      let html = `<p>${q.q}</p>`;
+    quizzes[currentQuiz].forEach((q, i) => {
+      let html = `<div class="question"><p>${q.q}</p>`;
       q.options.forEach((opt, j) => {
-        html += `<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label><br>`;
+        html += `<div class="option" onclick="selectOption(${i},${j},this)">${opt}</div>`;
       });
+      html += `</div>`;
       qDiv.innerHTML += html;
     });
   }
 
-  function submitQuiz() {
-    let correct = 0;
-    questions.forEach((q, i) => {
-      const selected = document.querySelector(`input[name="q${i}"]:checked`);
-      if (selected && parseInt(selected.value) === q.answer) {
-        correct++;
-      }
-    });
-    const earned = correct * 20; // 1 correct = 20 coins (max 60)
-    coins += earned;
-    document.getElementById('score').innerText = `You got ${correct} out of ${questions.length} correct!`;
-    document.getElementById('coins').innerText = `You earned ${earned} coins.`;
-    showScreen('results');
+  const answers = {};
+
+  function selectOption(qIndex, optIndex, el) {
+    document.querySelectorAll(`.question:nth-child(${qIndex+1}) .option`).forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    answers[qIndex] = optIndex;
   }
 
-  function openShop() {
-    document.getElementById('coinBalance').innerText = coins;
-    showScreen('shop');
+  function submitQuiz() {
+    let correct = 0;
+    quizzes[currentQuiz].forEach((q, i) => {
+      if (answers[i] === q.answer) correct++;
+    });
+    const earned = correct * 20; // 20 coins per correct
+    coins += earned;
+    document.getElementById('score').innerText = `You got ${correct} out of ${quizzes[currentQuiz].length} correct!`;
+    document.getElementById('coins').innerText = `You earned ${earned} coins.`;
+    showScreen('results');
+    currentQuiz = (currentQuiz + 1) % quizzes.length; // cycle quizzes
   }
 
   function buyItem(cost) {
@@ -145,11 +231,6 @@
     } else {
       alert("Not enough coins!");
     }
-  }
-
-  function restart() {
-    coins = 0;
-    showScreen('menu');
   }
 </script>
 
